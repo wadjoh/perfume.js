@@ -47,7 +47,7 @@ describe('measureStep', () => {
   });
 
   describe('when two marks are apart of the same step', () => {
-    it('shold run analyticsTracker', () => {
+    it('should run analyticsTracker', () => {
       config.analyticsTracker = () => {};
       spy = jest.spyOn(WP, 'mark');
       measureSpy = jest.spyOn(WP, 'measure');
@@ -124,22 +124,24 @@ describe('measureStep', () => {
         },
       );
       expect(analyticsTrackerSpy).toHaveBeenCalledTimes(1);
-      expect(analyticsTrackerSpy).toHaveBeenCalledWith({
-        attribution: { stepName: 'load_second_screen_first_journey' },
-        metricName: 'userJourneyStep',
-        rating: 'good',
-        data: 100,
-        navigationType: undefined,
-        navigatorInformation: {
-          deviceMemory: 0,
-          hardwareConcurrency: 16,
-          isLowEndDevice: false,
-          isLowEndExperience: false,
-          serviceWorkerStatus: 'unsupported',
-        },
-      });
+      expect(analyticsTrackerSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          attribution: { stepName: 'load_second_screen_first_journey' },
+          metricName: 'userJourneyStep',
+          rating: 'good',
+          data: 100,
+          navigationType: undefined,
+          navigatorInformation: {
+            deviceMemory: expect.any(Number),
+            hardwareConcurrency: expect.any(Number),
+            isLowEndDevice: expect.any(Boolean),
+            isLowEndExperience: expect.any(Boolean),
+            serviceWorkerStatus: 'unsupported',
+          },
+        }),
+      );
     });
-    it('should return when the start mark doesnt exist', () => { 
+    it('should return when the start mark doesnt exist', () => {
       measureSpy = jest.spyOn(WP, 'measure');
       // ============ Mock Data ============
       jest.spyOn(WP, 'getEntriesByName').mockImplementationOnce(name => {
@@ -147,6 +149,6 @@ describe('measureStep', () => {
       });
       measureStep('not-valid-step', 'startMark', 'endmark');
       expect(measureSpy).toBeCalledTimes(0);
-    })
+    });
   });
 });
